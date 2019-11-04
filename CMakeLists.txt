@@ -43,7 +43,7 @@ if(${CMAKE_SYSTEM_PROCESSOR} MATCHES arm*)
   IF( (NOT vchostif_LIBS ))
       MESSAGE(FATAL_ERROR "Could not find vchostif library")
   ENDIF()
-
+  message(WARNING ${vchostif_LIBS})
   set(RPI_LIBRARIES ${RPI_LIBRARIES} 
   ${bcmhost_LIBS}
   ${vcos_LIBS} 
@@ -121,8 +121,17 @@ include_directories(include
 
 add_compile_options(-Wall -Wuseless-cast -Wformat-nonliteral)
 
+## Declare a cpp library
+add_library(raspicli STATIC
+  src/RaspiCLI.c 
+)
+
+add_library(raspicamcontrol STATIC
+  src/RaspiCamControl.c
+)
+
 ## Declare a cpp executable
-add_executable(raspicam_node src/raspicam_node.cpp src/RaspiCamControl.cpp)
+add_executable(raspicam_node src/raspicam_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 add_dependencies(raspicam_node raspicam_node_generate_messages_cpp)
@@ -130,6 +139,8 @@ add_dependencies(raspicam_node raspicam_node_gencfg)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(raspicam_node
+  raspicamcontrol
+  raspicli
   ${catkin_LIBRARIES}
   ${RPI_LIBRARIES} 
 )
