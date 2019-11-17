@@ -5,7 +5,7 @@
   <arg name="camera_frame_id" default="raspicam"/>
   <arg name="camera_name" default="camerav2_1280x720"/>
 
-  <node type="raspicam_node" pkg="raspicam_node" name="raspicam_node" output="screen">
+  <node type="mono_node" pkg="raspicam_node" name="mono_node" output="screen" launch-prefix="xterm -e gdb --args">
     <param name="private_topics" value="true"/>
 
     <param name="camera_frame_id" value="$(arg camera_frame_id)"/>

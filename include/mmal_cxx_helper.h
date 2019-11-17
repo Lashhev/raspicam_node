@@ -1,10 +1,12 @@
-#include "interface/mmal/mmal.h"
-#include "interface/mmal/mmal_buffer.h"
-#include "interface/mmal/mmal_logging.h"
-#include "interface/mmal/util/mmal_connection.h"
-#include "interface/mmal/util/mmal_default_components.h"
-#include "interface/mmal/util/mmal_util.h"
-#include "interface/mmal/util/mmal_util_params.h"
+#pragma once
+#ifndef MMAL_cxx_hELPER_HPP
+#define MMAL_cxx_hELPER_HPP
+extern "C"
+{
+  #include "RaspiCamControl.h"
+}
+#include <functional>
+#include <memory>
 
 namespace mmal
 {
@@ -34,11 +36,7 @@ struct connection_deleter {
 };
 typedef std::unique_ptr<MMAL_CONNECTION_T, connection_deleter> connection_ptr;
 
-void default_delete_pool(MMAL_POOL_T* ptr) {
-  if (ptr != nullptr) {
-    fprintf(stderr, "%s\n", "LEAKED POOL! you need to define your own deleter");
-  }
-}
+void default_delete_pool(MMAL_POOL_T* ptr);
 typedef std::unique_ptr<MMAL_POOL_T, std::function<void(MMAL_POOL_T*)>> pool_ptr;
 
 
@@ -55,3 +53,4 @@ struct camera_port
 };
 
 } 
+#endif // MMAL_cxx_hELPER_HPP

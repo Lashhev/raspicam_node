@@ -38,12 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Some functions/structures for command line parameter parsing
  *
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <memory.h>
 
-#include "interface/vcos/vcos.h"
 
 #include "RaspiCLI.h"
 

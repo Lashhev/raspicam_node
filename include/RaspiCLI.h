@@ -28,6 +28,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef RASPICLI_H_
 #define RASPICLI_H_
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <memory.h>
+
+#include "interface/vcos/vcos.h"
 
 typedef struct
 {

@@ -3,11 +3,10 @@ project(raspicam_node)
 
 
 set(CMAKE_CXX_STANDARD 14) # use C++14
-
 # Enable compile optimizations
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fsee -fomit-frame-pointer -fno-signed-zeros -fno-math-errno -funroll-loops")
-set(CMAKE_BUILD_TYPE Release)
 
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -ggdb -fomit-frame-pointer -fno-signed-zeros")
 # add_definitions(-D_DEBUG)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -127,59 +126,102 @@ include_directories(include
 add_compile_options(-Wall -Wuseless-cast -Wformat-nonliteral)
 
 ## Declare a cpp library
-add_library(raspicli STATIC
+add_library(raspicli SHARED
   src/RaspiCLI.c 
 )
 
-add_library(raspicamcontrol STATIC
+add_library(raspicamcontrol SHARED
   src/RaspiCamControl.c
 )
+# add_library(raspicam_interface SHARED
+#   src/raspicam_interface.cpp)
+  
+# add_library(raspicam_ros_interface SHARED
+#   src/raspicam_ros.cpp
+#   )
 
-## Declare a cpp executables
-add_executable(raspicam_node src/raspicam_node.cpp)
-add_executable(stereo_node src/stereo_node.cpp)
+# add_library(raspicam_mono_ros SHARED
+#   src/raspicam_mono_ros.cpp)
 
 
-## Add cmake target dependencies of the executable/library
-add_dependencies(raspicam_node raspicam_node_generate_messages_cpp)
-add_dependencies(raspicam_node raspicam_node_gencfg)
-add_dependencies(stereo_node raspicam_node_generate_messages_cpp)
-add_dependencies(stereo_node raspicam_node_gencfg)
+add_executable(mono_node
+ src/main.cpp
+ src/raspicam_mono_ros.cpp
+ src/raspicam_ros.cpp
+ src/raspicam_interface.cpp
+ src/mmal_cxx_helper.cpp)
 
-## Specify libraries to link a library or executable target against
-target_link_libraries(raspicam_node
-  raspicamcontrol
-  raspicli
-  ${catkin_LIBRARIES}
-  ${RPI_LIBRARIES} 
-)
- target_link_libraries(stereo_node
-   raspicamcontrol
-   raspicli
-   ${catkin_LIBRARIES}
-   ${RPI_LIBRARIES} 
-)
+ add_executable(test_node
+ src/test.cpp
+ src/raspicam_interface.cpp
+ src/mmal_cxx_helper.cpp)
 
-#############
-## Install ##
-#############
+target_link_libraries(test_node
+raspicamcontrol
+raspicli
+${catkin_LIBRARIES}
+${RPI_LIBRARIES})
 
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
+target_link_libraries(mono_node 
+raspicamcontrol
+raspicli
+${catkin_LIBRARIES}
+${RPI_LIBRARIES})
 
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+add_dependencies(mono_node raspicam_node_generate_messages_cpp)
+add_dependencies(mono_node raspicam_node_gencfg)
 
 ## Mark executables and/or libraries for installation
-install(TARGETS raspicam_node 
+install(TARGETS mono_node 
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+# ## Declare a cpp executables
+# add_executable(raspicam_node src/raspicam_node.cpp)
+# add_executable(stereo_node src/stereo_node.cpp)
+
+
+# ## Add cmake target dependencies of the executable/library
+# add_dependencies(raspicam_node raspicam_node_generate_messages_cpp)
+# add_dependencies(raspicam_node raspicam_node_gencfg)
+# add_dependencies(stereo_node raspicam_node_generate_messages_cpp)
+# add_dependencies(stereo_node raspicam_node_gencfg)
+
+# ## Specify libraries to link a library or executable target against
+# target_link_libraries(raspicam_node
+#   raspicamcontrol
+#   raspicli
+#   ${catkin_LIBRARIES}
+#   ${RPI_LIBRARIES} 
+# )
+#  target_link_libraries(stereo_node
+#    raspicamcontrol
+#    raspicli
+#    ${catkin_LIBRARIES}
+#    ${RPI_LIBRARIES} 
+# )
+
+# #############
+# ## Install ##
+# #############
+
+# # all install targets should use catkin DESTINATION variables
+# # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
+
+# ## Mark executable scripts (Python etc.) for installation
+# ## in contrast to setup.py, you can choose the destination
+# # install(PROGRAMS
+# #   scripts/my_python_script
+# #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# # )
+
+# ## Mark executables and/or libraries for installation
+# install(TARGETS raspicam_node 
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
